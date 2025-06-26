@@ -6,7 +6,7 @@
 // const ret = { "name": '小明', "hobbies": ["看书", "旅游"] };
 
 async function main({ params }: Args): Promise<Output> {
-  const { image_list, audio_list, duration_list, scenes } = params;
+  const { image_list, audio_list, duration_list, scenes, slogan } = params;
 
   // 处理音频数据
   const audioData = [];
@@ -69,37 +69,65 @@ async function main({ params }: Args): Promise<Output> {
   ];
 
   // 开场音效
-  var kc_audio_url = '';
+  var kc_audio_url = 'https://cdn.jsdelivr.net/gh/sunxm1999/my-ai-resources@latest/sound/729169__fuzzytuesday__the-coming-hero.wav';
   // 背景音乐
-  var bg_audio_url = '';
+  var bg_audio_url = 'https://cdn.jsdelivr.net/gh/sunxm1999/my-ai-resources@latest/music/Keep-Climbing-The-Soundings.mp3';
+  // 结束画面背景图
+  const end_bg_img_url = 'https://cdn.jsdelivr.net/gh/sunxm1999/my-ai-resources@latest/image/end_bg.png';
+
+  const end_bg_img_data = [];
+  end_bg_img_data.push({
+    image_url: end_bg_img_url,
+    start: maxDuration,
+    end: maxDuration + 4000,
+    width: 1440,
+    height: 1080,
+  });
 
   const bg_audio_data = [];
   bg_audio_data.push({
-    sudio_url: bg_audio_url,
+    audio_url: bg_audio_url,
+    volume: 0.5,
     duration: maxDuration,
-    start: 0,
-    end: maxDuration,
+    start: 4000,
+    end: maxDuration + 4000,
+    fade_out_duration: 2000,
   });
 
   const kc_audio_data = [];
   kc_audio_data.push({
-    sudio_url: kc_audio_url,
+    audio_url: kc_audio_url,
+    volume: 0.5,
     duration: 4884897,
     start: 0,
     end: 4884897,
+    fade_out_duration: 2000,
   });
+
+  const keyWord = "《识人三国志》";
+  const endCaption = `更多三国人物尽在\n${keyWord}系列。`;
 
   // 构建输出对象
   const ret = {
     audioData: JSON.stringify(audioData),
-    bgAudioData: JSON.stringify(bg_audio_data),
-    kcAudioData: JSON.stringify(kc_audio_data),
+    bgAudioData: bg_audio_data,
+    kcAudioData: kc_audio_data,
     imageData: JSON.stringify(imageData),
     text_timelines: textTimelines,
     text_captions: processedSubtitles,
     title_list: title_list,
     title_timelines: title_timelines,
     roleImgData: JSON.stringify(roleImgData),
+    slogan_list: [slogan],
+    endCaption: [endCaption],
+    endCaptionKeyWord: [keyWord],
+    endCaptionTimelines: [
+      {
+        start: maxDuration,
+        end: maxDuration + 4000,
+      },
+    ],
+    endBgImgData: JSON.stringify(end_bg_img_data),
   };
 
   return ret;
